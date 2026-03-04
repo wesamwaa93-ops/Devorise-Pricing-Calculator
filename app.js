@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
             creation: 5000,
             tier1: 1500,
             tier2: 2400,
-            tier3: 0, // Custom Quote
+            tier3: 0,
             subAgent: 500
         },
         recurring: {
@@ -127,13 +127,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // =============================================
     // MULTI-PAGE PROPOSAL PDF GENERATOR
+    // Matches Marmara proposal design exactly
     // =============================================
     btnDownload.addEventListener('click', () => {
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF({ unit: 'mm', format: 'a4' });
         const W = doc.internal.pageSize.getWidth();   // 210
         const H = doc.internal.pageSize.getHeight();   // 297
-        const M = 20; // margin
+        const M = 18; // margin
         const CW = W - M * 2; // content width
 
         // --- Client Info ---
@@ -157,44 +158,47 @@ document.addEventListener('DOMContentLoaded', () => {
             channels.push(labels[c.value] || c.value);
         });
 
-        // --- Colors ---
+        // --- Colors (matching Marmara / Company Profile) ---
         const TEAL = [0, 124, 138];
-        const DARK = [10, 22, 40];
+        const DARK_NAVY = [15, 32, 65];
         const WHITE = [255, 255, 255];
-        const GRAY = [160, 176, 192];
-        const LIGHT_BG = [245, 248, 252];
-        const SUCCESS = [0, 201, 167];
+        const BLACK = [0, 0, 0];
+        const GRAY = [120, 120, 120];
+        const LIGHT_GRAY = [245, 245, 248];
 
         const today = new Date();
         const dateFormatted = today.toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' });
         const validUntil = new Date(today.getTime() + 14 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { day: '2-digit', month: 'long', year: 'numeric' });
         const refNum = 'DAI-' + today.getFullYear().toString().slice(-2) + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(Math.floor(Math.random() * 9000) + 1000);
 
-        // --- HELPER FUNCTIONS ---
+        // --- HELPER FUNCTIONS (Marmara style) ---
         function drawPageHeader() {
-            // Small logo + teal bar header on content pages
-            doc.setFillColor(...DARK);
-            doc.rect(0, 0, W, 14, 'F');
-            if (typeof DEVORISE_LOGO !== 'undefined') {
-                doc.addImage(DEVORISE_LOGO, 'PNG', M, 2, 40, 10);
+            // Header banner from Marmara — navy bar with teal diagonal + network nodes
+            if (typeof HEADER_BANNER !== 'undefined') {
+                doc.addImage(HEADER_BANNER, 'PNG', 0, 0, W, 28);
+            } else {
+                doc.setFillColor(...DARK_NAVY);
+                doc.rect(0, 0, W, 15, 'F');
+                doc.setFillColor(...TEAL);
+                doc.triangle(W - 50, 0, W, 0, W, 15, 'F');
             }
-            doc.setFillColor(...TEAL);
-            doc.rect(0, 13, W, 1.5, 'F');
         }
 
-        function drawFooter(pageNum, totalPages) {
-            doc.setFillColor(...DARK);
-            doc.rect(0, H - 15, W, 15, 'F');
-            doc.setFillColor(...TEAL);
-            doc.rect(0, H - 15, W, 1.5, 'F');
-            if (typeof DEVORISE_LOGO !== 'undefined') {
-                doc.addImage(DEVORISE_LOGO, 'PNG', M, H - 12.5, 28, 7);
+        function drawPageFooter(pageNum, totalPages) {
+            // Footer with contact bar from Marmara
+            if (typeof FOOTER_BAR !== 'undefined') {
+                doc.addImage(FOOTER_BAR, 'PNG', 0, H - 16, W, 16);
+            } else {
+                doc.setFillColor(250, 250, 252);
+                doc.rect(0, H - 16, W, 16, 'F');
+                doc.setFontSize(7);
+                doc.setTextColor(...GRAY);
+                doc.text('devorise.com  |  info@devorise.com  |  +962 7 9522 7489', W / 2, H - 7, { align: 'center' });
             }
-            doc.setFontSize(7.5);
+            // Page number
+            doc.setFontSize(7);
             doc.setTextColor(...GRAY);
-            doc.text('Solutions Made Differently  |  devorise.com', W / 2, H - 7, { align: 'center' });
-            doc.text('Confidential', W / 2 + 40, H - 7);
-            doc.text(`${pageNum} / ${totalPages}`, W - M, H - 7, { align: 'right' });
+            doc.text(`${pageNum} / ${totalPages}`, W - M, H - 4, { align: 'right' });
         }
 
         function sectionTitle(text, y) {
@@ -210,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function paragraph(text, y, options = {}) {
             const fs = options.fontSize || 10;
             const bold = options.bold || false;
-            const color = options.color || [50, 50, 50];
+            const color = options.color || [40, 40, 40];
             doc.setFont('helvetica', bold ? 'bold' : 'normal');
             doc.setFontSize(fs);
             doc.setTextColor(...color);
@@ -222,10 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
         function bulletPoint(text, y) {
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9.5);
-            doc.setTextColor(60, 60, 60);
             doc.setTextColor(...TEAL);
             doc.text('•', M + 4, y);
-            doc.setTextColor(60, 60, 60);
+            doc.setTextColor(40, 40, 40);
             const lines = doc.splitTextToSize(text, CW - 12);
             doc.text(lines, M + 10, y);
             return y + lines.length * 4.5 + 1.5;
@@ -234,149 +237,144 @@ document.addEventListener('DOMContentLoaded', () => {
         const TOTAL_PAGES = 6;
 
         // ======================
-        // PAGE 1: COVER PAGE
+        // PAGE 1: COVER PAGE (Marmara style)
         // ======================
-        // Full-page cover background image
+        // Full-page dark cover with AI background
         if (typeof COVER_BG !== 'undefined') {
             doc.addImage(COVER_BG, 'PNG', 0, 0, W, H);
         } else {
-            doc.setFillColor(...DARK);
+            doc.setFillColor(...DARK_NAVY);
             doc.rect(0, 0, W, H, 'F');
         }
-        // Dark overlay for text readability
-        doc.setGState(new doc.GState({ opacity: 0.55 }));
+        // Dark overlay
+        doc.setGState(new doc.GState({ opacity: 0.5 }));
         doc.setFillColor(0, 0, 0);
         doc.rect(0, 0, W, H, 'F');
         doc.setGState(new doc.GState({ opacity: 1 }));
 
-        // Logo at top
-        if (typeof DEVORISE_LOGO !== 'undefined') {
-            doc.addImage(DEVORISE_LOGO, 'PNG', W / 2 - 35, 25, 70, 19);
+        // Vertical Devorise logo centered at top
+        if (typeof LOGO_VERTICAL !== 'undefined') {
+            doc.addImage(LOGO_VERTICAL, 'PNG', W / 2 - 22, 18, 44, 44);
         }
 
-        // Teal accent stripe
-        doc.setFillColor(...TEAL);
-        doc.rect(0, 52, W, 2.5, 'F');
-
-        // Title block
+        // Title
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(32);
+        doc.setFontSize(20);
         doc.setTextColor(...WHITE);
-        doc.text(clientName, W / 2, 80, { align: 'center' });
+        const titleText = `${clientName} AI Transformation`;
+        const titleLines = doc.splitTextToSize(titleText, CW - 20);
+        doc.text(titleLines, W / 2, 78, { align: 'center' });
 
-        doc.setFontSize(15);
-        doc.setTextColor(...GRAY);
-        doc.text('AI Integration Package', W / 2, 92, { align: 'center' });
+        // Subtitle
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(12);
+        doc.setTextColor(180, 200, 210);
+        doc.text('Agentic AI Integration Package', W / 2, 92, { align: 'center' });
 
-        // Teal accent divider
+        // Teal divider
         doc.setFillColor(...TEAL);
-        doc.rect(W / 2 - 30, 100, 60, 1.5, 'F');
+        doc.rect(W / 2 - 25, 98, 50, 1.5, 'F');
 
-        // Semi-transparent info cards
-        // Prepared For card
-        doc.setGState(new doc.GState({ opacity: 0.15 }));
+        // Info cards — two side-by-side frosted glass cards
+        const cardY = 110;
+        const cardH = 38;
+        const cardW = CW / 2 - 5;
+
+        doc.setGState(new doc.GState({ opacity: 0.12 }));
         doc.setFillColor(...WHITE);
-        doc.roundedRect(M + 5, 112, CW / 2 - 10, 42, 4, 4, 'F');
+        doc.roundedRect(M, cardY, cardW, cardH, 4, 4, 'F');
+        doc.roundedRect(M + cardW + 10, cardY, cardW, cardH, 4, 4, 'F');
         doc.setGState(new doc.GState({ opacity: 1 }));
 
-        let cy = 120;
+        // Prepared For
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9);
-        doc.setTextColor(...GRAY);
-        doc.text('Prepared For:', M + 12, cy);
+        doc.setFontSize(8);
+        doc.setTextColor(160, 180, 190);
+        doc.text('Prepared For:', M + 6, cardY + 9);
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(14);
+        doc.setFontSize(13);
         doc.setTextColor(...WHITE);
-        doc.text(clientName, M + 12, cy + 9);
+        doc.text(clientName, M + 6, cardY + 18);
         if (clientIndustry) {
             doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.setTextColor(...GRAY);
-            doc.text(clientIndustry, M + 12, cy + 16);
+            doc.setFontSize(8);
+            doc.setTextColor(160, 180, 190);
+            doc.text(clientIndustry, M + 6, cardY + 25);
         }
 
-        // Prepared By card
-        doc.setGState(new doc.GState({ opacity: 0.15 }));
-        doc.setFillColor(...WHITE);
-        doc.roundedRect(W / 2 + 5, 112, CW / 2 - 10, 42, 4, 4, 'F');
-        doc.setGState(new doc.GState({ opacity: 1 }));
-
+        // Prepared By
+        const bx = M + cardW + 16;
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9);
-        doc.setTextColor(...GRAY);
-        doc.text('Prepared By:', W / 2 + 12, cy);
+        doc.setFontSize(8);
+        doc.setTextColor(160, 180, 190);
+        doc.text('Prepared By:', bx, cardY + 9);
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(14);
+        doc.setFontSize(13);
         doc.setTextColor(...WHITE);
-        doc.text('Devorise AI', W / 2 + 12, cy + 9);
+        doc.text('Devorise', bx, cardY + 18);
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9);
-        doc.setTextColor(...GRAY);
-        doc.text('Solutions Made Differently', W / 2 + 12, cy + 16);
+        doc.setFontSize(8);
+        doc.setTextColor(160, 180, 190);
+        doc.text('Solutions Made Differently', bx, cardY + 25);
 
-        // Date & Reference at bottom
-        cy = 180;
-        doc.setFontSize(9);
-        doc.setTextColor(...GRAY);
-        doc.text('Date: ' + dateFormatted, W / 2, cy, { align: 'center' });
-        doc.text('Project Reference: ' + refNum, W / 2, cy + 6, { align: 'center' });
+        // Date & Reference centered
+        doc.setFontSize(8.5);
+        doc.setTextColor(140, 160, 170);
+        doc.text('Date: ' + dateFormatted, W / 2, 164, { align: 'center' });
+        doc.text('Project Reference: ' + refNum, W / 2, 170, { align: 'center' });
 
-        // Company Profile Link — centered button
-        cy = 200;
-        const btnW = 85;
-        doc.setFillColor(TEAL[0], TEAL[1], TEAL[2]);
-        doc.roundedRect(W / 2 - btnW / 2, cy - 5, btnW, 10, 3, 3, 'F');
+        // Company Profile button
+        const btnW = 90;
+        const btnY = 182;
+        doc.setFillColor(...TEAL);
+        doc.roundedRect(W / 2 - btnW / 2, btnY, btnW, 12, 4, 4, 'F');
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(9);
+        doc.setFontSize(10);
         doc.setTextColor(...WHITE);
-        doc.text('View Company Profile ↗', W / 2, cy + 1.5, { align: 'center' });
-        doc.link(W / 2 - btnW / 2, cy - 5, btnW, 10, { url: 'https://devoriseai.framer.website' });
+        doc.text('View Company Profile !—', W / 2, btnY + 8, { align: 'center' });
+        doc.link(W / 2 - btnW / 2, btnY, btnW, 12, { url: 'https://devoriseai.framer.website' });
 
-        drawFooter(1, TOTAL_PAGES);
+        drawPageFooter(1, TOTAL_PAGES);
 
         // ======================
-        // PAGE 2: COMPANY SUMMARY
+        // PAGE 2: COMPANY SUMMARY (condensed — Marmara style)
         // ======================
         doc.addPage();
         doc.setFillColor(...WHITE);
         doc.rect(0, 0, W, H, 'F');
         drawPageHeader();
 
-        let y = 22;
-        y = sectionTitle('Company Summary', y);
+        let y = 35;
 
-        y = paragraph('Devorise AI is a dynamic and innovative company founded in 2023 with a mission to deliver cutting-edge solutions tailored to meet the evolving needs of businesses and consumers. Since its inception, Devorise has grown into a trusted name in AI agents, digital transformation, and business consulting.', y + 2);
-        y += 2;
-        y = paragraph('Today, Devorise specializes in AI services, software development, customer engagement solutions, and workflow automation, helping organizations streamline operations, enhance customer experience, and achieve sustainable growth.', y);
-        y += 4;
+        // Horizontal Devorise logo
+        if (typeof LOGO_HORIZONTAL !== 'undefined') {
+            doc.addImage(LOGO_HORIZONTAL, 'PNG', M, y, 55, 14);
+        }
+        y += 22;
 
-        y = sectionTitle('Why Devorise AI?', y);
-        y += 2;
-        y = bulletPoint('20+ enterprise clients across multiple industries', y);
-        y = bulletPoint('70% average reduction in process completion time', y);
-        y = bulletPoint('85% accuracy improvement in decision-making tasks', y);
-        y = bulletPoint('60% cost reduction in automated departments', y);
-        y = bulletPoint('99.9% uptime SLA with enterprise-grade reliability', y);
-        y += 4;
+        // Company Summary heading
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(16);
+        doc.setTextColor(...BLACK);
+        doc.text('Company Summary', M, y);
+        y += 8;
 
-        y = sectionTitle('Strategic Partnerships', y);
-        y += 2;
-        y = bulletPoint('Cloud Infrastructure: AWS, Microsoft Azure, Google Cloud', y);
-        y = bulletPoint('Enterprise Integration: Salesforce, SAP, Oracle, Microsoft, UiPath', y);
-        y = bulletPoint('AI Frameworks: OpenAI, Anthropic, Google AI', y);
-        y += 4;
+        y = paragraph('Devorise is a dynamic and innovative company founded in 2023 with a mission to deliver cutting-edge solutions tailored to meet the evolving needs of businesses and consumers. Since its inception, Devorise has grown into a trusted name in AI agents, digital transformation, and business consulting, known for its commitment to excellence, creativity, and customer satisfaction.', y, { fontSize: 10 });
+        y += 3;
+        y = paragraph(`Today, Devorise specializes in AI services, software development, customer engagement solutions, and workflow automation, helping organizations streamline operations, enhance customer experience, and achieve sustainable growth. With a client-centric approach, we empower partners like ${clientName} to scale faster, reduce costs, and unlock new opportunities.`, y, { fontSize: 10 });
+        y += 8;
 
-        y = sectionTitle('Our Approach', y);
-        y += 2;
-        y = bulletPoint('Collaborative Partnership — We engage clients as true co-creators, fostering transparent communication and shared ownership throughout the project lifecycle.', y);
-        y += 1;
-        y = bulletPoint('Adaptive Agility — We welcome change and continuously refine our approach to align with emerging insights and business priorities.', y);
-        y += 1;
-        y = bulletPoint('Outcome-Driven Prototyping — From the outset, we build and iterate on working solutions ensuring every feature is validated and tested.', y);
-        y += 1;
-        y = bulletPoint('Lean Documentation — We maintain concise, mutually agreed artifacts that capture requirements, design decisions, and acceptance criteria.', y);
+        // Company Profile CTA button
+        const profileBtnW = 100;
+        doc.setFillColor(...TEAL);
+        doc.roundedRect(M, y, profileBtnW, 14, 5, 5, 'F');
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(...WHITE);
+        doc.text('View Company Profile !—', M + profileBtnW / 2, y + 9.5, { align: 'center' });
+        doc.link(M, y, profileBtnW, 14, { url: 'https://devoriseai.framer.website' });
 
-        drawFooter(2, TOTAL_PAGES);
+        drawPageFooter(2, TOTAL_PAGES);
 
         // ======================
         // PAGE 3: PROPOSED SOLUTION
@@ -386,18 +384,29 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.rect(0, 0, W, H, 'F');
         drawPageHeader();
 
-        y = 22;
-        y = sectionTitle('Proposed Solution', y);
+        y = 35;
+        y = sectionTitle('PROPOSED SOLUTION', y);
+        y += 2;
 
-        y = paragraph(`Devorise AI will deploy a specialized Agentic AI solution designed to transform ${clientName}'s customer interactions and operational workflows into intelligent, autonomous service processes.`, y + 2, { fontSize: 10.5 });
-        y += 1;
+        // Client-specific intro
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setTextColor(...DARK_NAVY);
+        doc.text(`${clientName} — Agentic Customer Experience System`, M, y);
+        y += 8;
+
+        y = paragraph(`Our solution for ${clientName} is fully custom-tailored, exclusive, and delivered as a white-labeled system. AI agents will engage customers across selected channels, handle inquiries, check availability, collect data, and forward structured requests directly to your team.`, y);
+        y += 2;
+
+        y = paragraph('Impact: This hybrid approach balances automation and human oversight — AI agents streamline communication and information collection, while the internal team remains in control of the final decisions and customer relationship.', y, { fontSize: 9.5 });
+        y += 4;
 
         if (clientDesc) {
             y = paragraph(clientDesc, y, { fontSize: 10 });
-            y += 2;
+            y += 4;
         }
 
-        // Dynamic solution based on selections
+        // Dynamic solution based on channel selections
         const solutionComponents = [];
 
         if (channels.includes('WhatsApp')) {
@@ -405,7 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 title: 'AI WhatsApp Customer Experience & Support',
                 items: [
                     'WhatsApp Channel Handling: Managing inquiries centrally with AI-powered responses.',
-                    'Intent Recognition: Identifying service type, urgency, and location automatically.',
+                    'Intent Recognition: Identifying service type, urgency, and requirements automatically.',
                     'Smart Booking Guidance: Guiding customers through structured booking steps.',
                     'Instant Quotation Logic: Calculating prices based on predefined rules.',
                     'Context Retention: Remembering customer history across conversations.',
@@ -462,8 +471,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         solutionComponents.forEach((comp, idx) => {
             doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
-            doc.setTextColor(...DARK);
+            doc.setFontSize(10.5);
+            doc.setTextColor(...DARK_NAVY);
             doc.text(`${idx + 1}. ${comp.title}`, M, y);
             y += 6;
             comp.items.forEach(item => {
@@ -472,41 +481,44 @@ document.addEventListener('DOMContentLoaded', () => {
             y += 3;
         });
 
-        drawFooter(3, TOTAL_PAGES);
+        drawPageFooter(3, TOTAL_PAGES);
 
         // ======================
-        // PAGE 4: IMPLEMENTATION ROADMAP
+        // PAGE 3: IMPLEMENTATION ROADMAP
         // ======================
         doc.addPage();
         doc.setFillColor(...WHITE);
         doc.rect(0, 0, W, H, 'F');
         drawPageHeader();
 
-        y = 22;
-        y = sectionTitle('Implementation Roadmap', y);
-        y += 2;
+        y = 35;
+        y = sectionTitle('IMPLEMENTATION ROADMAP', y);
+        y += 4;
+
+        // Project Stages Infographic (from Marmara)
+        if (typeof STAGES_INFOGRAPHIC !== 'undefined') {
+            doc.addImage(STAGES_INFOGRAPHIC, 'JPEG', M + 5, y, CW - 10, 22);
+            y += 28;
+        }
 
         // Phase 1
-        doc.setFillColor(...LIGHT_BG);
-        doc.roundedRect(M, y, CW, 72, 3, 3, 'F');
+        doc.setFillColor(...LIGHT_GRAY);
+        doc.roundedRect(M, y, CW, 62, 3, 3, 'F');
         doc.setDrawColor(...TEAL);
-        doc.setLineWidth(0.8);
-        doc.line(M, y, M, y + 72);
+        doc.setLineWidth(1);
+        doc.line(M, y, M, y + 62);
 
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setTextColor(...TEAL);
         doc.text('Phase 1: Integration & Data Readiness', M + 6, y + 8);
         doc.setFillColor(...TEAL);
-        doc.roundedRect(M + CW - 40, y + 2, 36, 7, 2, 2, 'F');
+        doc.roundedRect(M + CW - 38, y + 2, 34, 7, 2, 2, 'F');
         doc.setFontSize(7.5);
         doc.setTextColor(...WHITE);
-        doc.text('Week 1-2', M + CW - 38, y + 6.5);
+        doc.text('Week 1-2', M + CW - 36, y + 6.5);
 
         let py = y + 16;
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(9.5);
-        doc.setTextColor(60, 60, 60);
         const p1Items = [
             'Define service logic, pricing rules, and communication standards',
             'Secure API access for selected channels and systems',
@@ -516,28 +528,29 @@ document.addEventListener('DOMContentLoaded', () => {
             'Team onboarding and access provisioning'
         ];
         p1Items.forEach(item => {
+            doc.setFontSize(9);
             doc.setTextColor(...TEAL); doc.text('•', M + 8, py);
-            doc.setTextColor(60, 60, 60); doc.text(item, M + 14, py);
-            py += 5.5;
+            doc.setTextColor(50, 50, 50); doc.text(item, M + 14, py);
+            py += 5;
         });
 
-        y += 80;
+        y += 70;
 
         // Phase 2
-        doc.setFillColor(...LIGHT_BG);
-        doc.roundedRect(M, y, CW, 55, 3, 3, 'F');
+        doc.setFillColor(...LIGHT_GRAY);
+        doc.roundedRect(M, y, CW, 50, 3, 3, 'F');
         doc.setDrawColor(...TEAL);
-        doc.line(M, y, M, y + 55);
+        doc.line(M, y, M, y + 50);
 
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setTextColor(...TEAL);
         doc.text('Phase 2: Agent Deployment & Execution', M + 6, y + 8);
         doc.setFillColor(...TEAL);
-        doc.roundedRect(M + CW - 40, y + 2, 36, 7, 2, 2, 'F');
+        doc.roundedRect(M + CW - 38, y + 2, 34, 7, 2, 2, 'F');
         doc.setFontSize(7.5);
         doc.setTextColor(...WHITE);
-        doc.text('Week 3-4', M + CW - 38, y + 6.5);
+        doc.text('Week 3-4', M + CW - 36, y + 6.5);
 
         py = y + 16;
         const p2Items = [
@@ -548,28 +561,29 @@ document.addEventListener('DOMContentLoaded', () => {
             'Monitored go-live under operational conditions'
         ];
         p2Items.forEach(item => {
+            doc.setFontSize(9);
             doc.setTextColor(...TEAL); doc.text('•', M + 8, py);
-            doc.setTextColor(60, 60, 60); doc.text(item, M + 14, py);
-            py += 5.5;
+            doc.setTextColor(50, 50, 50); doc.text(item, M + 14, py);
+            py += 5;
         });
 
-        y += 63;
+        y += 58;
 
         // Phase 3
-        doc.setFillColor(...LIGHT_BG);
-        doc.roundedRect(M, y, CW, 55, 3, 3, 'F');
+        doc.setFillColor(...LIGHT_GRAY);
+        doc.roundedRect(M, y, CW, 50, 3, 3, 'F');
         doc.setDrawColor(...TEAL);
-        doc.line(M, y, M, y + 55);
+        doc.line(M, y, M, y + 50);
 
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(12);
+        doc.setFontSize(11);
         doc.setTextColor(...TEAL);
         doc.text('Phase 3: Monitoring & Optimization', M + 6, y + 8);
         doc.setFillColor(...TEAL);
-        doc.roundedRect(M + CW - 40, y + 2, 36, 7, 2, 2, 'F');
+        doc.roundedRect(M + CW - 38, y + 2, 34, 7, 2, 2, 'F');
         doc.setFontSize(7.5);
         doc.setTextColor(...WHITE);
-        doc.text('Ongoing', M + CW - 35, y + 6.5);
+        doc.text('Ongoing', M + CW - 33, y + 6.5);
 
         py = y + 16;
         const p3Items = [
@@ -580,36 +594,38 @@ document.addEventListener('DOMContentLoaded', () => {
             'Regular reporting and strategic alignment reviews'
         ];
         p3Items.forEach(item => {
+            doc.setFontSize(9);
             doc.setTextColor(...TEAL); doc.text('•', M + 8, py);
-            doc.setTextColor(60, 60, 60); doc.text(item, M + 14, py);
-            py += 5.5;
+            doc.setTextColor(50, 50, 50); doc.text(item, M + 14, py);
+            py += 5;
         });
 
-        drawFooter(4, TOTAL_PAGES);
+        drawPageFooter(4, TOTAL_PAGES);
 
         // ======================
-        // PAGE 5: INVESTING & PRICING
+        // PAGE 4: INVESTING & PRICING
         // ======================
         doc.addPage();
         doc.setFillColor(...WHITE);
         doc.rect(0, 0, W, H, 'F');
         drawPageHeader();
 
-        y = 22;
-        y = sectionTitle('Investing & Pricing', y);
-        y += 2;
+        y = 35;
+        y = sectionTitle('INVESTING & PRICING', y);
+        y += 4;
 
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(13);
-        doc.setTextColor(...DARK);
-        doc.text(`${clientName} — Agentic AI Package`, M, y + 2);
+        doc.setFontSize(12);
+        doc.setTextColor(...DARK_NAVY);
+        doc.text(`${clientName} — Agentic AI Package`, M, y);
         y += 10;
 
-        // Table Header
-        const colWidths = [CW * 0.48, CW * 0.26, CW * 0.26];
+        // Table
+        const colWidths = [CW * 0.50, CW * 0.25, CW * 0.25];
         const colX = [M, M + colWidths[0], M + colWidths[0] + colWidths[1]];
 
-        doc.setFillColor(...DARK);
+        // Table header
+        doc.setFillColor(...DARK_NAVY);
         doc.roundedRect(M, y, CW, 10, 2, 2, 'F');
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
@@ -622,30 +638,30 @@ document.addEventListener('DOMContentLoaded', () => {
         // Table rows
         const rows = [];
         if (state.infrastructure === 'creation') {
-            rows.push(['System Creation (Custom Platform)', formatNumber(pricing.setup.creation), '-']);
+            rows.push(['System Creation (Custom Platform)', formatNumber(pricing.setup.creation), '—']);
         }
-        rows.push([tierNames[state.tier], state.tier === 'tier3' ? 'Custom Quote' : formatNumber(tierCost), '-']);
+        rows.push([tierNames[state.tier], state.tier === 'tier3' ? 'Custom Quote' : formatNumber(tierCost), '—']);
         if (state.subAgents > 0) {
-            rows.push([`Additional Sub-Agents (×${state.subAgents})`, formatNumber(state.subAgents * pricing.setup.subAgent), '-']);
+            rows.push([`Additional Sub-Agents (×${state.subAgents})`, formatNumber(state.subAgents * pricing.setup.subAgent), '—']);
         }
         const retainerLabel = state.retainer === 'standard' ? 'Standard AI Retainer' : 'Enterprise AI Retainer';
         const retainerCost = state.retainer === 'standard' ? pricing.recurring.retainerStandard : pricing.recurring.retainerEnterprise;
-        rows.push([retainerLabel, '-', formatNumber(retainerCost)]);
+        rows.push([retainerLabel, '—', formatNumber(retainerCost)]);
         if (state.hosting === 'devorise') {
-            rows.push(['Hosting & Infrastructure Mgmt', '-', formatNumber(pricing.recurring.hosting)]);
+            rows.push(['Hosting & Infrastructure Mgmt', '—', formatNumber(pricing.recurring.hosting)]);
         }
         if (state.addonReviews) {
-            rows.push(['Bulk Messaging & Reviews Add-on', '-', formatNumber(pricing.recurring.addonReviews)]);
+            rows.push(['Bulk Messaging & Reviews Add-on', '—', formatNumber(pricing.recurring.addonReviews)]);
         }
 
         rows.forEach((row, i) => {
             if (i % 2 === 0) {
-                doc.setFillColor(245, 248, 252);
+                doc.setFillColor(...LIGHT_GRAY);
                 doc.rect(M, y - 1, CW, 9, 'F');
             }
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(9.5);
-            doc.setTextColor(50, 50, 50);
+            doc.setTextColor(40, 40, 40);
             doc.text(row[0], colX[0] + 4, y + 5);
             doc.text(row[1], colX[1] + 4, y + 5);
             doc.text(row[2], colX[2] + 4, y + 5);
@@ -653,13 +669,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Totals row
-        doc.setFillColor(...DARK);
+        doc.setFillColor(...DARK_NAVY);
         doc.roundedRect(M, y, CW, 12, 2, 2, 'F');
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(11);
         doc.setTextColor(...WHITE);
         doc.text('Total', colX[0] + 4, y + 8.5);
-        doc.setTextColor(...SUCCESS);
+        doc.setTextColor(0, 201, 167);
         const setupText = state.tier === 'tier3' ? 'Custom Quote' : formatNumber(setupTotal);
         doc.text(setupText, colX[1] + 4, y + 8.5);
         doc.text(formatNumber(monthlyTotal) + '/mo', colX[2] + 4, y + 8.5);
@@ -667,137 +683,150 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Yearly option
         const yearlyTotal = monthlyTotal * 12;
-        doc.setFillColor(...LIGHT_BG);
+        doc.setFillColor(...LIGHT_GRAY);
         doc.roundedRect(M, y, CW, 14, 3, 3, 'F');
         doc.setDrawColor(...TEAL);
         doc.setLineWidth(0.5);
         doc.line(M, y, M, y + 14);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10);
-        doc.setTextColor(...DARK);
+        doc.setTextColor(...DARK_NAVY);
         doc.text('Yearly Subscription Option:', M + 6, y + 6);
         doc.setTextColor(...TEAL);
         doc.text(formatNumber(yearlyTotal) + ' / year', M + 6, y + 12);
         y += 22;
 
         // API Usage note
-        doc.setFillColor(...LIGHT_BG);
+        doc.setFillColor(...LIGHT_GRAY);
         doc.roundedRect(M, y, CW, 22, 3, 3, 'F');
         doc.setDrawColor(...TEAL);
+        doc.setLineWidth(0.5);
         doc.line(M, y, M, y + 22);
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(9);
-        doc.setTextColor(...DARK);
+        doc.setTextColor(...DARK_NAVY);
         doc.text('+ Variable API Usage (Pay-As-You-Go)', M + 6, y + 7);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8.5);
         doc.setTextColor(100, 100, 100);
         doc.text('Meta/WhatsApp & OpenAI Token costs + 20% Management Margin, billed monthly in arrears.', M + 6, y + 13);
-        doc.text('Approx. ~$0.035/message, ~$10/1M tokens. Actual usage billed separately as Pay-As-You-Go.', M + 6, y + 18);
+        doc.text('Approx. ~$0.035/message, ~$10/1M tokens. Actual usage billed separately.', M + 6, y + 18);
         y += 30;
 
         // Pricing note
         doc.setFont('helvetica', 'italic');
         doc.setFontSize(8.5);
-        doc.setTextColor(120, 120, 120);
-        const pricingNote = `Pricing and scope will be reviewed upon renewal based on operational scale, distribution, branch expansion, and system complexity.`;
-        const noteLines = doc.splitTextToSize(pricingNote, CW);
-        doc.text(noteLines, M, y);
+        doc.setTextColor(130, 130, 130);
+        const pricingNote = 'Pricing and scope will be reviewed upon renewal based on operational scale, distribution, branch expansion, and system complexity.';
+        doc.text(doc.splitTextToSize(pricingNote, CW), M, y);
 
-        drawFooter(5, TOTAL_PAGES);
+        drawPageFooter(5, TOTAL_PAGES);
 
         // ======================
-        // PAGE 6: TERMS & SIGNATURES
+        // PAGE 5: TERMS & SIGNATURES
         // ======================
         doc.addPage();
         doc.setFillColor(...WHITE);
         doc.rect(0, 0, W, H, 'F');
         drawPageHeader();
 
-        y = 22;
-        y = sectionTitle('Terms & Conditions', y);
+        y = 35;
+        y = sectionTitle('TERMS & CONDITIONS', y);
         y += 2;
 
+        // Proposal Validity
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10.5);
-        doc.setTextColor(...DARK);
+        doc.setTextColor(...DARK_NAVY);
         doc.text('Proposal Validity', M, y);
         y += 5;
-        y = paragraph(`This proposal is valid until ${validUntil}. Scope, pricing, and resource allocation are guaranteed within this period.`, y);
-        y += 4;
+        y = paragraph(`This proposal is valid until ${validUntil}. Pricing and resource availability are guaranteed through this date.`, y);
+        y += 3;
 
+        // Assumptions
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10.5);
-        doc.setTextColor(...DARK);
+        doc.setTextColor(...DARK_NAVY);
         doc.text('Assumptions', M, y);
         y += 5;
-        y = paragraph(`${clientName} will provide required system access and permissions, integration support, and operational data necessary for secure AI deployment.`, y);
-        y += 4;
+        y = bulletPoint(`${clientName} will provide access to WhatsApp Business API/groups where the AI agent will operate.`, y);
+        y = bulletPoint('Offers, packages, and pricing details will be shared to train the AI on accurate responses.', y);
+        y = bulletPoint(`A single point of contact from ${clientName} will be assigned for communication, approvals, and decision-making.`, y);
+        y += 3;
 
+        // Client Responsibilities
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10.5);
-        doc.setTextColor(...DARK);
+        doc.setTextColor(...DARK_NAVY);
         doc.text('Client Responsibilities', M, y);
         y += 5;
-        y = paragraph(`${clientName} will review and approve AI escalation logic, operational thresholds, and staff interface workflows while providing timely feedback during implementation.`, y);
-        y += 4;
+        y = bulletPoint('Provide updated offers, packages, and promotional content for AI responses.', y);
+        y = bulletPoint('Approve and review conversation flows and automation logic in a timely manner.', y);
+        y = bulletPoint('Ensure smooth coordination with internal stakeholders for testing and rollout.', y);
+        y += 3;
 
+        // Payment Terms
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10.5);
-        doc.setTextColor(...DARK);
+        doc.setTextColor(...DARK_NAVY);
         doc.text('Payment Terms', M, y);
         y += 5;
         y = paragraph('50% of setup fee upon agreement signing. 50% upon Phase 2 deployment completion. Monthly recurring fees billed at the start of each calendar month.', y);
 
         // --- Agreement & Signatures ---
-        y += 8;
-        y = sectionTitle('Agreement & Signatures', y);
+        y += 6;
+        y = sectionTitle('AGREEMENT & SIGNATURES', y);
         y += 2;
 
-        y = paragraph(`This proposal constitutes the full understanding between ${clientName} and Devorise AI regarding the implementation of Agentic AI solutions.`, y);
+        y = paragraph(`This proposal constitutes the full understanding between ${clientName} and Devorise regarding the implementation of the Agentic Customer Experience System.`, y);
         y += 8;
 
         // Two-column signature blocks
         const sigColW = CW / 2 - 5;
 
         // Devorise Side
-        doc.setFillColor(...LIGHT_BG);
+        doc.setFillColor(...LIGHT_GRAY);
         doc.roundedRect(M, y, sigColW, 55, 3, 3, 'F');
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(10);
-        doc.setTextColor(...TEAL);
-        doc.text('Devorise AI', M + 6, y + 8);
+
+        // Logo in signature box
+        if (typeof LOGO_HORIZONTAL !== 'undefined') {
+            doc.addImage(LOGO_HORIZONTAL, 'PNG', M + 4, y + 3, 42, 10);
+        } else {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(10);
+            doc.setTextColor(...TEAL);
+            doc.text('DEVORISE.', M + 6, y + 10);
+        }
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(9);
         doc.setTextColor(80, 80, 80);
-        doc.text('Solutions Made Differently', M + 6, y + 14);
-        doc.text('Name: Waseem Abu Harb', M + 6, y + 22);
-        doc.text('Title: Head Of Growth', M + 6, y + 28);
-        doc.text('Date: ' + dateFormatted, M + 6, y + 34);
-        doc.text('Signature:', M + 6, y + 42);
+        doc.text('Name: Waseem Abu-Harb', M + 6, y + 22);
+        doc.text('Title: Head of Sales Department', M + 6, y + 28);
+        doc.text('Date: ' + dateFormatted, M + 6, y + 36);
+        doc.text('Signature:', M + 6, y + 44);
         doc.setDrawColor(180, 180, 180);
         doc.setLineWidth(0.3);
-        doc.line(M + 30, y + 48, M + sigColW - 6, y + 48);
+        doc.line(M + 30, y + 50, M + sigColW - 6, y + 50);
 
         // Client Side
         const cx = M + sigColW + 10;
-        doc.setFillColor(...LIGHT_BG);
+        doc.setFillColor(...LIGHT_GRAY);
         doc.roundedRect(cx, y, sigColW, 55, 3, 3, 'F');
         doc.setFont('helvetica', 'bold');
         doc.setFontSize(10);
         doc.setTextColor(...TEAL);
-        doc.text(clientName, cx + 6, y + 8);
+        doc.text(clientName, cx + 6, y + 10);
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(9);
         doc.setTextColor(80, 80, 80);
         doc.text('Name: ' + (clientContact || '________________________'), cx + 6, y + 22);
         doc.text('Title: ' + (clientTitle || '________________________'), cx + 6, y + 28);
-        doc.text('Date: ' + dateFormatted, cx + 6, y + 34);
-        doc.text('Signature:', cx + 6, y + 42);
+        doc.text('Date: ' + dateFormatted, cx + 6, y + 36);
+        doc.text('Signature:', cx + 6, y + 44);
         doc.setDrawColor(180, 180, 180);
-        doc.line(cx + 30, y + 48, cx + sigColW - 6, y + 48);
+        doc.line(cx + 30, y + 50, cx + sigColW - 6, y + 50);
 
-        drawFooter(6, TOTAL_PAGES);
+        drawPageFooter(6, TOTAL_PAGES);
 
         // --- SAVE ---
         const safeName = clientName.replace(/[^a-zA-Z0-9]/g, '_');

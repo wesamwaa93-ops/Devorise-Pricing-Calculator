@@ -332,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.setFontSize(10);
         doc.setTextColor(...WHITE);
         doc.text('View Company Profile !—', W / 2, btnY + 8, { align: 'center' });
-        doc.link(W / 2 - btnW / 2, btnY, btnW, 12, { url: 'https://devoriseai.framer.website' });
+        doc.link(W / 2 - btnW / 2, btnY, btnW, 12, { url: 'Devorise_Company_Profile.pdf' });
 
         drawPageFooter(1, TOTAL_PAGES);
 
@@ -372,7 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         doc.setFontSize(11);
         doc.setTextColor(...WHITE);
         doc.text('View Company Profile !—', M + profileBtnW / 2, y + 9.5, { align: 'center' });
-        doc.link(M, y, profileBtnW, 14, { url: 'https://devoriseai.framer.website' });
+        doc.link(M, y, profileBtnW, 14, { url: 'Devorise_Company_Profile.pdf' });
 
         drawPageFooter(2, TOTAL_PAGES);
 
@@ -842,3 +842,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initial render
     calculate();
 });
+

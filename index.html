@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Devorise AI - Sales Pricing Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="brand">
+                <img src="logo.png" alt="Devorise AI" class="logo-img">
+            </div>
+            <h1>Sales <span>Pricing Matrix</span></h1>
+            <p>Generate accurate Agentic AI quotes in under 5 minutes.</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Form Section -->
+            <div class="form-section">
+                <!-- Section 0: Client Info -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <span class="step-number" style="background: var(--success);">✎</span>
+                        <h2>Client Information</h2>
+                    </div>
+                    <div class="form-group">
+                        <label>Company / Client Name</label>
+                        <input type="text" id="client-name" class="modern-select" placeholder="e.g. Bravo Cleaning"
+                            style="appearance:auto;">
+                    </div>
+                    <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                        <div>
+                            <label>Contact Person</label>
+                            <input type="text" id="client-contact" class="modern-select"
+                                placeholder="e.g. Ahmad Al-Masri" style="appearance:auto;">
+                        </div>
+                        <div>
+                            <label>Title / Role</label>
+                            <input type="text" id="client-title" class="modern-select"
+                                placeholder="e.g. General Manager" style="appearance:auto;">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Industry</label>
+                        <select id="client-industry" class="modern-select">
+                            <option value="Healthcare">Healthcare</option>
+                            <option value="Beauty & Wellness">Beauty & Wellness</option>
+                            <option value="Hospitality & Travel">Hospitality & Travel</option>
+                            <option value="Movement & Experience">Movement & Experience</option>
+                            <option value="Banking & Finance">Banking & Finance</option>
+                            <option value="Enterprise & Industrial">Enterprise & Industrial</option>
+                            <option value="Retail & E-commerce">Retail & E-commerce</option>
+                            <option value="Food & Beverage">Food & Beverage</option>
+                            <option value="Education">Education</option>
+                            <option value="Real Estate">Real Estate</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Brief Project Description</label>
+                        <textarea id="client-description" class="modern-select" rows="3"
+                            placeholder="e.g. AI-powered WhatsApp customer support and booking automation..."
+                            style="appearance:auto; resize:vertical; height:auto;"></textarea>
+                    </div>
+                </div>
+
+                <!-- Section 1 -->
+                <div class="card fade-in">
+                    <div class="card-header">
+                        <span class="step-number">01</span>
+                        <h2>Client Infrastructure</h2>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Does the client need a platform built from scratch?</label>
+                        <div class="radio-group">
+                            <label class="radio-card">
+                                <input type="radio" name="infrastructure" value="integration" checked>
+                                <span class="content">
+                                    <strong>Integration Only</strong>
+                                    <span>They have a CRM/Website. Connect via API.</span>
+                                </span>
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="infrastructure" value="creation">
+                                <span class="content">
+                                    <strong>System Creation</strong>
+                                    <span>Build a custom web dashboard/app (+5,000 JOD est)</span>
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Channels (Check all that apply)</label>
+                        <div class="checkbox-group">
+                            <label class="checkbox-pill"><input type="checkbox" name="channels" value="whatsapp"
+                                    checked> WhatsApp</label>
+                            <label class="checkbox-pill"><input type="checkbox" name="channels" value="website">
+                                Website</label>
+                            <label class="checkbox-pill"><input type="checkbox" name="channels" value="social"> Social
+                                Media</label>
+                            <label class="checkbox-pill"><input type="checkbox" name="channels" value="internal">
+                                Internal Systems</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="card fade-in delay-1">
+                    <div class="card-header">
+                        <span class="step-number">02</span>
+                        <h2>AI Intelligence & Scope</h2>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select AI Tier (Intelligence Level)</label>
+                        <div class="tier-selector">
+                            <label class="tier-card">
+                                <input type="radio" name="tier" value="tier1">
+                                <div class="tier-content">
+                                    <div class="tier-badge">Tier 1</div>
+                                    <h3>Basic Agent</h3>
+                                    <p>Standard Q&A, simple routing. No direct sales.</p>
+                                    <div class="price-hint">~1,500 JOD</div>
+                                </div>
+                            </label>
+                            <label class="tier-card">
+                                <input type="radio" name="tier" value="tier2" checked>
+                                <div class="tier-content">
+                                    <div class="tier-badge popular">Tier 2 (Most Common)</div>
+                                    <h3>Advanced Agent</h3>
+                                    <p>Custom RAG, complex integrations, completes sales.</p>
+                                    <div class="price-hint">~2,400 JOD</div>
+                                </div>
+                            </label>
+                            <label class="tier-card">
+                                <input type="radio" name="tier" value="tier3">
+                                <div class="tier-content">
+                                    <div class="tier-badge enterprise">Tier 3</div>
+                                    <h3>Enterprise ML</h3>
+                                    <p>Custom DL/ML models, predictive analytics.</p>
+                                    <div class="price-hint">Custom Quote</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Additional Sub-Agents (e.g. Guest Relations, Reservations)</label>
+                        <div class="counter">
+                            <button type="button" class="btn-icon" id="btn-minus">-</button>
+                            <input type="number" id="sub-agents" value="0" min="0" max="10" readonly>
+                            <button type="button" class="btn-icon" id="btn-plus">+</button>
+                        </div>
+                        <p class="helper-text">+500 JOD per extra specialized agent</p>
+                    </div>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="card fade-in delay-2">
+                    <div class="card-header">
+                        <span class="step-number">03</span>
+                        <h2>Maintenance, Hosting & Add-ons</h2>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hosting Provider</label>
+                        <div class="radio-group horizontal">
+                            <label class="radio-card small">
+                                <input type="radio" name="hosting" value="devorise" checked>
+                                <span class="content"><strong>Devorise AI Hosts</strong></span>
+                            </label>
+                            <label class="radio-card small">
+                                <input type="radio" name="hosting" value="client">
+                                <span class="content"><strong>Client Hosts (AWS/GCP)</strong></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Monthly Retainer Tier (Training & Maintenance)</label>
+                        <select id="retainer-tier" class="modern-select">
+                            <option value="standard">Standard Support (~250 JOD/mo)</option>
+                            <option value="enterprise">Enterprise Support (~400 JOD/mo)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group toggle-group">
+                        <div class="toggle-info">
+                            <label>Bulk Messaging & Reviews Add-on</label>
+                            <p>+100 JOD / month</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="addon-reviews">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Receipt Section -->
+            <div class="receipt-section fade-in delay-3">
+                <div class="receipt-card glass-panel">
+                    <h2>Final Quote Summary</h2>
+
+                    <div class="receipt-divider"></div>
+
+                    <div class="receipt-group">
+                        <h3>One-Time Setup Fee</h3>
+                        <div class="line-item" id="li-infra" style="display:none;">
+                            <span>System Creation</span>
+                            <span class="amount">5,000 JOD</span>
+                        </div>
+                        <div class="line-item">
+                            <span id="label-tier">Advanced AI Setup</span>
+                            <span class="amount" id="amount-tier">2,400 JOD</span>
+                        </div>
+                        <div class="line-item" id="li-subagents" style="display:none;">
+                            <span>Sub-Agents (<span id="count-subagents">0</span>)</span>
+                            <span class="amount" id="amount-subagents">0 JOD</span>
+                        </div>
+                        <div class="receipt-total">
+                            <span>Total Setup</span>
+                            <span class="total-amount" id="total-setup">2,400 JOD</span>
+                        </div>
+                    </div>
+
+                    <div class="receipt-divider"></div>
+
+                    <div class="receipt-group">
+                        <h3>Recurring (Monthly)</h3>
+                        <div class="line-item">
+                            <span id="label-retainer">Standard Retainer</span>
+                            <span class="amount" id="amount-retainer">250 JOD</span>
+                        </div>
+                        <div class="line-item" id="li-hosting">
+                            <span>Sys. Hosting & Mgmt</span>
+                            <span class="amount" id="amount-hosting">50 JOD</span>
+                        </div>
+                        <div class="line-item" id="li-addon-reviews" style="display:none;">
+                            <span>Reporting Add-on</span>
+                            <span class="amount">100 JOD</span>
+                        </div>
+                        <div class="receipt-total">
+                            <span>Total Monthly</span>
+                            <span class="total-amount" id="total-monthly">300 JOD</span>
+                        </div>
+                    </div>
+
+                    <div class="receipt-divider"></div>
+
+                    <div class="variable-cost-alert">
+                        <h4>+ API Usage (Variable Pay-As-You-Go)</h4>
+                        <p>Meta/WhatsApp & OpenAI Token costs + <strong>20% Management Margin</strong> billed in
+                            arrears.</p>
+                    </div>
+
+                    <button class="btn-primary" id="btn-download">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                        Download Full Proposal PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">Copied to clipboard!</div>
+
+    <script src="brand-assets.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>

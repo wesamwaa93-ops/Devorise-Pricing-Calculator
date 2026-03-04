@@ -1,0 +1,617 @@
+:root {
+    --primary: #0A1628;
+    --primary-light: #0D2137;
+    --accent: #007C8A;
+    --accent-hover: #00616D;
+    --success: #00C9A7;
+    --bg-color: #060D18;
+    --card-bg: rgba(13, 33, 55, 0.75);
+    --text-main: #E8EDF3;
+    --text-muted: #8899AA;
+    --border: rgba(255, 255, 255, 0.08);
+    --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+    --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #060D18;
+    background-image:
+        radial-gradient(at 40% 20%, rgba(0, 124, 138, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, rgba(0, 200, 167, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, rgba(0, 124, 138, 0.08) 0px, transparent 50%);
+    color: var(--text-main);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 0.75rem;
+}
+
+.logo-img {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 12px rgba(0, 124, 138, 0.3));
+}
+
+h1 {
+    font-weight: 700;
+    font-size: 2rem;
+    color: #FFFFFF;
+}
+
+h1 span {
+    color: var(--accent);
+}
+
+.header p {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2.5rem;
+}
+
+@media (max-width: 900px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+}
+
+.step-number {
+    background: var(--accent);
+    color: white;
+    font-weight: 700;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+    color: #C8D6E5;
+    font-size: 0.95rem;
+}
+
+/* Radio Cards */
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.radio-group.horizontal {
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.radio-card {
+    position: relative;
+    cursor: pointer;
+    flex: 1;
+}
+
+.radio-card input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.radio-card .content {
+    display: block;
+    padding: 1rem 1.25rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    background: rgba(13, 33, 55, 0.6);
+}
+
+.radio-card input:checked+.content {
+    border-color: var(--accent);
+    background: rgba(0, 124, 138, 0.1);
+    box-shadow: 0 0 0 4px rgba(0, 124, 138, 0.15);
+}
+
+.radio-card .content strong {
+    display: block;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    color: #FFFFFF;
+}
+
+.radio-card .content span {
+    display: block;
+    font-size: 0.85rem;
+    color: #A0B0C0;
+}
+
+/* Checkbox Pills */
+.checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.checkbox-pill {
+    cursor: pointer;
+    background: rgba(20, 50, 80, 0.8);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    padding: 0.6rem 1.25rem;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #E8EDF3;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.checkbox-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.checkbox-pill input {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+}
+
+.checkbox-pill:has(input:checked) {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+}
+
+/* Tier Selector */
+.tier-selector {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 600px) {
+    .tier-selector {
+        grid-template-columns: 1fr;
+    }
+}
+
+.tier-card {
+    position: relative;
+    cursor: pointer;
+}
+
+.tier-card input {
+    position: absolute;
+    opacity: 0;
+}
+
+.tier-content {
+    height: 100%;
+    padding: 1.5rem 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    background: rgba(13, 33, 55, 0.6);
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.tier-card input:checked+.tier-content {
+    border-color: var(--accent);
+    box-shadow: 0 4px 15px rgba(0, 124, 138, 0.25);
+    transform: translateY(-2px);
+}
+
+.tier-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+}
+
+.tier-badge.popular {
+    background: rgba(0, 124, 138, 0.2);
+    color: var(--success);
+}
+
+.tier-badge.enterprise {
+    background: rgba(255, 100, 100, 0.15);
+    color: #FF6B6B;
+}
+
+.tier-content h3 {
+    font-size: 1.1rem;
+    color: #FFFFFF;
+    margin-bottom: 0.5rem;
+}
+
+.tier-content p {
+    font-size: 0.85rem;
+    color: #A0B0C0;
+    margin-bottom: 1rem;
+    min-height: 48px;
+}
+
+.price-hint {
+    font-weight: 700;
+    color: var(--success);
+    font-size: 1rem;
+}
+
+/* Counter */
+.counter {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(13, 33, 55, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    width: fit-content;
+    padding: 0.25rem;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #FFFFFF;
+    transition: background 0.2s;
+}
+
+.btn-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.counter input {
+    width: 40px;
+    text-align: center;
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    font-size: 1.1rem;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    color: #FFFFFF;
+}
+
+.counter input:focus {
+    outline: none;
+}
+
+.helper-text {
+    font-size: 0.9rem;
+    color: #A0B0C0;
+    margin-top: 0.5rem;
+}
+
+/* Dropdown */
+.modern-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 1rem;
+    color: #FFFFFF;
+    background: rgba(13, 33, 55, 0.8);
+    cursor: pointer;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748B'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.2rem;
+}
+
+.modern-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0, 124, 138, 0.2);
+}
+
+/* Toggle Switch */
+.toggle-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    background: rgba(13, 33, 55, 0.6);
+}
+
+.toggle-info label {
+    margin-bottom: 0;
+    color: #D0DAE5;
+}
+
+.toggle-info p {
+    font-size: 0.9rem;
+    color: #A0B0C0;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: .3s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .3s;
+}
+
+input:checked+.slider {
+    background-color: var(--success);
+}
+
+input:checked+.slider:before {
+    transform: translateX(22px);
+}
+
+.slider.round {
+    border-radius: 28px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Receipt Section */
+.glass-panel {
+    background: linear-gradient(135deg, rgba(0, 124, 138, 0.15) 0%, rgba(10, 22, 40, 0.95) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 124, 138, 0.3);
+    border-radius: 20px;
+    padding: 2.5rem 2rem;
+    color: white;
+    position: sticky;
+    top: 2rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.receipt-card h2 {
+    color: white;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.receipt-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 1.5rem 0;
+}
+
+.receipt-group h3 {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94A3B8;
+    margin-bottom: 1rem;
+}
+
+.line-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.line-item .amount {
+    font-weight: 500;
+}
+
+.receipt-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.total-amount {
+    font-size: 1.35rem;
+    color: var(--success);
+}
+
+.variable-cost-alert {
+    background: rgba(255, 255, 255, 0.05);
+    border-left: 3px solid var(--accent);
+    padding: 1rem;
+    border-radius: 4px 8px 8px 4px;
+    margin-bottom: 2rem;
+}
+
+.variable-cost-alert h4 {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    color: #E2E8F0;
+}
+
+.variable-cost-alert p {
+    font-size: 0.8rem;
+    color: #94A3B8;
+    line-height: 1.4;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* Animations */
+.fade-in {
+    opacity: 0;
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+.delay-1 {
+    animation-delay: 0.1s;
+}
+
+.delay-2 {
+    animation-delay: 0.2s;
+}
+
+.delay-3 {
+    animation-delay: 0.3s;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Toast */
+.toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--success);
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
